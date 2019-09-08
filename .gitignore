@@ -1,0 +1,7 @@
+docs/
+utils/
+kzload
+
+*.o
+*.elf
+*.mot
