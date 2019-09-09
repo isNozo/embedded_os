@@ -8,6 +8,9 @@ int main(void)
 
   puts("Hello World!\n");
 
+  putxval(0x10, 4); puts("\n");
+  putxval(0xffff, 4); puts("\n");
+
   while (1)
     ;
 
