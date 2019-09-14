@@ -2,31 +2,30 @@
 #include "serial.h"
 #include "lib.h"
 
-void *memset(void *b, int c, long len)
+void *memset(void *dst, int c, long len)
 {
-  char *p = b;
+  char *ret = dst;
   for (; len > 0; len--)
-    *(p++) = c;
-  return b;
+    *(dst++) = c;
+  return ret;
 }
 
 void *memcpy(void *dst, const void *src, long len)
 {
-  char *d = dst;
-  const char *s = src;
+  char *ret = dst;
   for (; len > 0; len--)
-    *(d++) = *(s++);
-  return dst;
+    *(dst++) = *(src++);
+  return ret;
 }
 
-int memcmp(const void *b1, const void *b2, long len)
+int memcmp(const void *src1, const void *src2, long len)
 {
-  const char *p1 = b1, *p2 = b2;
-  for (; len > 0; len--) {
-    if (*p1 != *p2)
-      return (*p1 > *p2) ? 1 : -1;
-    p1++;
-    p2++;
+  while (len > 0) {
+    if (*src1 != *src2)
+      return (*src1 > *src2) ? 1 : -1;
+    src1++;
+    src2++;
+    len--;
   }
   return 0;
 }
@@ -41,31 +40,31 @@ int strlen(const char *s)
 
 char *strcpy(char *dst, const char *src)
 {
-  char *d = dst;
-  for (; !(*src);) {
+  char *ret = dst;
+  while (!(*src)) {
     *(dst++) = *(src++);
   }
-  return d;
+  return ret;
 }
 
-int strcmp(const char *s1, const char *s2)
+int strcmp(const char *src1, const char *src2)
 {
-  while (*s1 || *s2) {
-    if (*s1 != *s2)
+  while (*src1 || *src2) {
+    if (*src1 != *src2)
       return (*s1 > *s2) ? 1 : -1;
-    s1++;
-    s2++;
+    src1++;
+    src2++;
   }
   return 0;
 }
 
-int strncmp(const char *s1, const char *s2, int len)
+int strncmp(const char *src1, const char *src2, int len)
 {
-  while ((*s1 || *s2) && (len > 0)) {
-    if (*s1 != *s2)
-      return (*s1 > *s2) ? 1 : -1;
-    s1++;
-    s2++;
+  while ((*src1 || *src2) && (len > 0)) {
+    if (*src1 != *src2)
+      return (*src1 > *src2) ? 1 : -1;
+    src1++;
+    src2++;
     len--;
   }
   return 0;
