@@ -2,56 +2,54 @@
 #include "serial.h"
 #include "lib.h"
 
-void *memset(void *dst, int c, long len)
+void *memset(void *dstpp, char c, long len)
 {
-  char *ret = dst;
-  for (; len > 0; len--)
-    *(dst++) = c;
-  return ret;
+  char *dstp = dstpp;
+  while (len-- > 0)
+    *(dstp++) = c;
+  return dstpp;
 }
 
-void *memcpy(void *dst, const void *src, long len)
+void *memcpy(void *dstpp, const void *srcpp, long len)
 {
-  char *ret = dst;
-  for (; len > 0; len--)
-    *(dst++) = *(src++);
-  return ret;
+  char *dstp = dstpp;
+  const char *srcp = srcpp;
+  while (len-- > 0)
+    *(dstp++) = *(srcp++);
+  return dstpp;
 }
 
-int memcmp(const void *src1, const void *src2, long len)
+int memcmp(const void *srcpp1, const void *srcpp2, long len)
 {
-  while (len > 0) {
-    if (*src1 != *src2)
-      return (*src1 > *src2) ? 1 : -1;
-    src1++;
-    src2++;
-    len--;
+  const char *srcp1 = srcp1;
+  const char *srcp2 = srcp2;
+  while (len-- > 0) {
+    if (*srcp1 != *srcp2)
+      return (*srcp1 > *srcp2) ? 1 : -1;
+    srcp1++;
+    srcp2++;
   }
   return 0;
 }
 
-int strlen(const char *s)
+int strlen(const char *str)
 {
   int len = 0;
-  for (; *s; s++, len++)
-    ;
+  while (*str++)
+    len++;
   return len;
 }
 
 char *strcpy(char *dst, const char *src)
 {
-  char *ret = dst;
-  while (!(*src)) {
-    *(dst++) = *(src++);
-  }
-  return ret;
+  return memcpy(dst, src, strlen(src) + 1);
 }
 
 int strcmp(const char *src1, const char *src2)
 {
   while (*src1 || *src2) {
     if (*src1 != *src2)
-      return (*s1 > *s2) ? 1 : -1;
+      return (*src1 > *src2) ? 1 : -1;
     src1++;
     src2++;
   }
@@ -60,12 +58,11 @@ int strcmp(const char *src1, const char *src2)
 
 int strncmp(const char *src1, const char *src2, int len)
 {
-  while ((*src1 || *src2) && (len > 0)) {
+  while ((*src1 || *src2) && (len-- > 0)) {
     if (*src1 != *src2)
       return (*src1 > *src2) ? 1 : -1;
     src1++;
     src2++;
-    len--;
   }
   return 0;
 }
