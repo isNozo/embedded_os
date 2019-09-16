@@ -2,19 +2,6 @@
 #include "serial.h"
 #include "lib.h"
 
-int global_data = 0x10;
-int global_bss;
-static int static_data = 0x20;
-static int static_bss;
-
-static void printval(void)
-{
-  puts("global_data = "); putxval(global_data, 0); puts("\n");
-  puts("global_bss  = "); putxval(global_bss , 0); puts("\n");
-  puts("static_data = "); putxval(static_data, 0); puts("\n");
-  puts("static_bss  = "); putxval(static_bss , 0); puts("\n");
-}
-
 static int init(void)
 {
   extern int erodata, data_start, edata, bss_start, ebss;
@@ -29,27 +16,28 @@ static int init(void)
 
 int main(void)
 {
+  static char buf[16];
   init();
-  
-  int local_data = 0xaa;
 
-  puts("=== local variable ===\n");
-  puts("local_data = "); putxval(local_data, 0); puts("\n");
-  puts("overwrite local variable.\n");
-  local_data = 0xbb;
-  puts("local_data = "); putxval(local_data, 0); puts("\n");
+  puts("\n");
+  puts("-----------------------------------\n");
+  puts("kzload (kozos boot loader) started.\n");
+  puts("-----------------------------------\n");
 
-  puts("=== global variable ===\n");
-  printval();
-  puts("overwrite global variable.\n");
-  global_data = 0x20;
-  global_bss  = 0x30;
-  static_data = 0x40;
-  static_bss  = 0x50;
-  printval();
+  while (1) {
+    puts("kzload> ");
+    gets(buf);
 
-  while (1)
-    ;
+    if (!strcmp(buf, "load")) {
+      puts("load started\n");
+    } else if (!strcmp(buf, "dump")) {
+      puts("dump staretd\n");
+    } else {
+      puts("unknown command : ");
+      puts(buf);
+      puts("\n");
+    }
+  }
 
   return 0;
 }
