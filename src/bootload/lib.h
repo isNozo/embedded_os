@@ -1,6 +1,12 @@
 #ifndef _LIB_H_INCLUDED_
 #define _LIB_H_INCLUDED_
 
+#ifdef DEBUG
+#define puts_d(msg) puts(msg)
+#else
+#define puts_d(msg)
+#endif
+
 void *memset(void *dstpp, char c, long len);
 void *memcpy(void *dstpp, const void *srcpp, long len);
 int memcmp(const void *srcpp1, const void *srcpp2, long len);
