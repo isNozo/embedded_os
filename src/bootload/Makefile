@@ -22,6 +22,8 @@ H8WRITE_SERDEV = /dev/ttyUSB0
 OBJS  = vector.o startup.o main.o
 OBJS += lib.o serial.o xmodem.o
 
+ASMS = vector.s main.s lib.o serial.s xmodem.s
+
 TARGET = kzload
 
 CFLAGS = -Wall -mh -nostdinc -nostdlib -fno-builtin
@@ -33,9 +35,6 @@ CFLAGS += -DKZLOAD
 
 LFLAGS = -static -T ld.scr -L.
 
-.SUFFIXES: .c .o
-.SUFFIXES: .s .o
-
 all :		$(TARGET)
 
 $(TARGET) :	$(OBJS)
@@ -43,11 +42,14 @@ $(TARGET) :	$(OBJS)
 		cp $(TARGET) $(TARGET).elf
 		$(STRIP) $(TARGET)
 
-.c.o :		$<
+%.o :		%.c
 		$(CC) -c $(CFLAGS) $<
 
-.s.o :		$<
+%.o :		%.s
 		$(CC) -c $(CFLAGS) $<
+
+%.s :		%.c
+		$(CC) -S $(CFLAGS) $<
 
 $(TARGET).mot :	$(TARGET)
 		$(OBJCOPY) -O srec $(TARGET) $(TARGET).mot
@@ -58,7 +60,9 @@ write :		$(TARGET).mot
 		$(H8WRITE) -3069 -f20 $(TARGET).mot $(H8WRITE_SERDEV)
 
 clean :
-		rm -f $(OBJS) $(TARGET) $(TARGET).elf $(TARGET).mot
+		rm -f $(OBJS) $(ASMS) $(TARGET) $(TARGET).elf $(TARGET).mot
 
 debug :		CFLAGS += -DDEBUG
 debug :		$(TARGET)
+
+asm :		$(ASMS)
