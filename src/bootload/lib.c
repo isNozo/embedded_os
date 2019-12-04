@@ -21,8 +21,8 @@ void *memcpy(void *dstpp, const void *srcpp, long len)
 
 int memcmp(const void *srcpp1, const void *srcpp2, long len)
 {
-  const char *srcp1 = srcp1;
-  const char *srcp2 = srcp2;
+  const char *srcp1 = srcpp1;
+  const char *srcp2 = srcpp2;
   while (len-- > 0) {
     if (*srcp1 != *srcp2)
       return (*srcp1 > *srcp2) ? 1 : -1;
