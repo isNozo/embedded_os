@@ -1,6 +1,6 @@
 #include "defines.h"
-#include "serial.h"
 #include "xmodem.h"
+#include "elf.h"
 #include "lib.h"
 
 static int init(void)
@@ -18,11 +18,10 @@ static int init(void)
 static int dump(char *buf, long size)
 {
   long i;
-  
-  if (size <= 0) {
-    puts("no data.\n");
-    return -1;
-  }
+
+  puts("size = ");
+  putxval(size, 0);
+  puts("\n");
 
   for (i = 0; i < size; i++) {
     /* show linenum */
@@ -57,16 +56,14 @@ static void wait()
 
 int main(void)
 {
+  extern int buffer_start;
   static char buf[16];
   static long size = -1;
-  static unsigned char *loadbuf = NULL;
-  extern int buffer_start;
+  static unsigned char *loadbuf = (char *)(&buffer_start);
 
   init();
-  loadbuf = (char *)(&buffer_start);
 
-  puts("\n");
-  puts("-----------------------------------\n");
+  puts("\n-----------------------------------\n");
   puts("kzload (kozos boot loader) started.\n");
   puts("-----------------------------------\n");
 
@@ -89,10 +86,19 @@ int main(void)
 
     /* dump command */
     } else if (!strcmp(buf, "dump")) {
-      puts("size = ");
-      putxval(size, 0);
-      puts("\n");
-      dump(loadbuf, size);
+      if (size < 0) {
+	puts("no data loaded.\n");
+      } else {
+	dump(loadbuf, size);
+      }
+
+    /* run command */
+    } else if (!strcmp(buf, "run")) {
+      if (size < 0) {
+	puts("no data loaded.\n");
+      } else {
+	elf_load(loadbuf);
+      }
 
     /* unkown command */
     } else {

@@ -2,9 +2,11 @@
 #define _LIB_H_INCLUDED_
 
 #ifdef DEBUG
-#define puts_d(msg) puts(msg)
+#define puts_d(str) puts(str)
+#define putxval_d(value, column) putxval(value, column)
 #else
-#define puts_d(msg)
+#define puts_d(str)
+#define putxval_d(value, column)
 #endif
 
 void *memset(void *dstpp, char c, long len);
