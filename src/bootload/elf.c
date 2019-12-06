@@ -64,7 +64,7 @@ static int elf_load_program(struct elf_header *header)
   int i;
   struct elf_program_header *phdr;
 
-  puts("Offset VirtAddr PhysAddr Fsize Msize Fl Align\n");
+  puts_d("Offset VirtAddr PhysAddr Fsize Msize Fl Align\n");
   for (i = 0; i < header->program_header_num; i++) {
     phdr = (struct elf_program_header *)
       ((char *)header + header->program_header_offset + header->program_header_size * i);
@@ -72,19 +72,24 @@ static int elf_load_program(struct elf_header *header)
     if (phdr->type != 1)
       continue;
 
-    putxval(phdr->offset       , 6); puts(" ");
-    putxval(phdr->virtual_addr , 8); puts(" ");
-    putxval(phdr->physical_addr, 8); puts(" ");
-    putxval(phdr->file_size    , 5); puts(" ");
-    putxval(phdr->memory_size  , 5); puts(" ");
-    putxval(phdr->flags        , 2); puts(" ");
-    putxval(phdr->align        , 2); puts("\n");
+    putxval_d(phdr->offset       , 6); puts(" ");
+    putxval_d(phdr->virtual_addr , 8); puts(" ");
+    putxval_d(phdr->physical_addr, 8); puts(" ");
+    putxval_d(phdr->file_size    , 5); puts(" ");
+    putxval_d(phdr->memory_size  , 5); puts(" ");
+    putxval_d(phdr->flags        , 2); puts(" ");
+    putxval_d(phdr->align        , 2); puts("\n");
+
+    /* Load segment to memory */
+    memcpy((char *)phdr->physical_addr, (char *)header + phdr->offset, phdr->file_size);
+    /* Clear bss region */
+    memset((char *)phdr->physical_addr + phdr->file_size, 0, phdr->memory_size - phdr->file_size);
   }
 
   return 0;
 }
 
-int elf_load(char *buf)
+char *elf_load(char *buf)
 {
   puts_d("elf_load is called.\n");
 
@@ -112,10 +117,10 @@ int elf_load(char *buf)
   puts_d("  Section Name Index    : 0x"); putxval_d(header->section_name_index    , 4); puts_d("\n");
 
   if (elf_check(header) < 0)
-    return -1;
+    return NULL;
 
   if (elf_load_program(header) < 0)
-    return -1;
+    return NULL;
 
-  return 0;
+  return (char *)header->entry_point;
 }

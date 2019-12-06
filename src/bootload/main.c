@@ -61,11 +61,11 @@ int main(void)
   static long size = -1;
   static unsigned char *loadbuf = (char *)(&buffer_start);
 
+  char *entry_point;
+
   init();
 
-  puts("\n-----------------------------------\n");
-  puts("kzload (kozos boot loader) started.\n");
-  puts("-----------------------------------\n");
+  puts("=== kzload (kozos boot loader) started ===\n");
 
   while (1) {
     puts("kzload> ");
@@ -97,7 +97,16 @@ int main(void)
       if (size < 0) {
 	puts("no data loaded.\n");
       } else {
-	elf_load(loadbuf);
+	entry_point = elf_load(loadbuf);
+        if(!entry_point) {
+          puts("run error!\n");
+        } else {
+          puts("starting from entry point : ");
+          putxval((unsigned long)entry_point, 0);
+          puts("\n");
+
+          ((void (*)(void))entry_point)();
+        }
       }
 
     /* unkown command */
