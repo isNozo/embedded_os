@@ -1,6 +1,6 @@
 docs/
 kzload
-
+kozos
 *.o
 *.elf
 *.mot
